@@ -27,14 +27,14 @@
 
 ```python
 # Import the module
-from rotaryencoder import rotaryencoder
+from pyky040 import pyky040
 
 # Define your callback
 def my_callback(scale_position):
     print('Hello world! The scale position is {}'.format(scale_position))
 
 # Init the encoder pins (CLK, DT, SW)
-my_encoder = rotaryencoder.Encoder(17, 18, 26)
+my_encoder = pyky040.Encoder(17, 18, 26)
 
 # Setup the options and callbacks (see documentation)
 my_encoder.setup(scale_min=0, scale_max=100, step=1, chg_callback=my_callback)
@@ -56,7 +56,7 @@ As the `watch()` method runs an infinite polling loop, you might want to run it 
 
 ```python
 # Import the module and threading
-from rotaryencoder import rotaryencoder
+from pyky040 import pyky040
 import threading
 
 # Define your callback
@@ -64,7 +64,7 @@ def my_callback(scale_position):
     print('Hello world! The scale position is {}'.format(scale_position))
 
 # Init the encoder pins (CLK, DT, SW)
-my_encoder = rotaryencoder.Encoder(17, 18, 26)
+my_encoder = pyky040.Encoder(17, 18, 26)
 
 # Setup the options and callbacks (see documentation)
 my_encoder.setup(scale_min=0, scale_max=100, step=1, chg_callback=my_callback)
