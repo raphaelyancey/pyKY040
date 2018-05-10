@@ -15,7 +15,7 @@ setup(
     long_description_content_type='text/markdown',
     url='https://github.com/raphaelyancey/pyKY040',
     author='Raphael Yancey',
-    author_email='raphael@badfile.net',
+    author_email='pypi@raphaelyancey.fr',
     keywords='keyes rotary encoder switch ky040',
     #py_modules=["pyky040"],
     packages=find_packages(),
