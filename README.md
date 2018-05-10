@@ -126,4 +126,4 @@ Starts the listener. The pins polling interval is `1ms`.
 
 - Customizable polling interval
 - Optional switch pin
-- Test the package installation on a Raspberry Pi
+- Bounce times
