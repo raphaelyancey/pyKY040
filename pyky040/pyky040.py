@@ -74,6 +74,7 @@ class Encoder:
     def watch(self):
 
         swTriggered = False  # Used to debounce a long switch click (prevent multiple callback calls)
+        latest_switch_call = None
 
         while True:
             try:
