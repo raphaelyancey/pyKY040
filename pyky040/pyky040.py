@@ -16,7 +16,7 @@ class Encoder:
     sw = None
 
     polling_interval = None  # Polling interval (in ms)
-    sw_debounce_time = 100  # Debounce time (for switch only)
+    sw_debounce_time = 250  # Debounce time (for switch only)
 
     step = 1  # Scale step from min to max
     max_counter = 100  # Scale max
