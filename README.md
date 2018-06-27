@@ -33,8 +33,8 @@ from pyky040 import pyky040
 def my_callback(scale_position):
     print('Hello world! The scale position is {}'.format(scale_position))
 
-# Init the encoder pins (CLK, DT, SW)
-my_encoder = pyky040.Encoder(17, 18, 26)
+# Init the encoder pins
+my_encoder = pyky040.Encoder(CLK=17, DT=18, SW=26)
 
 # Setup the options and callbacks (see documentation)
 my_encoder.setup(scale_min=0, scale_max=100, step=1, chg_callback=my_callback)
