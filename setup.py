@@ -9,7 +9,7 @@ with open(path.join(here, 'README.md'), encoding='utf-8') as f:
 
 setup(
     name='pyky040',
-    version='0.1.2',
+    version='0.1.3',
     description='High-level interface for the KY040 rotary encoder and switch.',
     long_description=long_description,
     long_description_content_type='text/markdown',
