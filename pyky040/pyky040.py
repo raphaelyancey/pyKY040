@@ -1,8 +1,9 @@
 from RPi import GPIO
-from time import sleep
+from time import sleep, time
 import logging
+from threading import Timer
 
-logger = logging.getLogger('virtual_fm_band.rotaryencoder')
+logger = logging.getLogger()
 
 
 class Encoder:
@@ -11,7 +12,8 @@ class Encoder:
     dt = None
     sw = None
 
-    polling_interval = 1  # Polling interval (in ms)
+    polling_interval = None  # Polling interval (in ms)
+    sw_debounce_time = None  # Debounce time (for switch only)
 
     step = 1  # Scale step from min to max
     max_counter = 100  # Scale max
@@ -24,18 +26,21 @@ class Encoder:
     inc_callback = None  # Clockwise rotation (increment)
     dec_callback = None  # Anti-clockwise rotation (decrement)
     chg_callback = None  # Rotation (either way)
-    sw_callback = None  # Switch pressed
+    sw_callback  = None  # Switch pressed
 
-    def __init__(self, clkPin, dtPin, swPin):
-        self.clk = clkPin
-        self.dt = dtPin
+    def __init__(self, CLK=None, DT=None, SW=None, polling_interval=1):
+        if not CLK or not DT:
+            raise BaseException("You must specify at least the CLK & DT pins")
+        self.clk = CLK
+        self.dt = DT
         GPIO.setmode(GPIO.BCM)
         GPIO.setup(self.clk, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
         GPIO.setup(self.dt, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
-        if swPin is not None:
-            self.sw = swPin
+        if SW is not None:
+            self.sw = SW
             GPIO.setup(self.sw, GPIO.IN, pull_up_down=GPIO.PUD_UP)  # Pulled-up because KY-040 switch is shorted to ground when pressed
         self.clkLastState = GPIO.input(self.clk)
+        self.polling_interval = polling_interval
 
     def setup(self, **params):
 
@@ -60,15 +65,8 @@ class Encoder:
             self.chg_callback = params['chg_callback']
         if 'sw_callback' in params:
             self.sw_callback = params['sw_callback']
-
-    # def def_inc_callback(self, callback):
-    #     self.inc_callback = callback
-
-    # def def_dec_callback(self, callback):
-    #     self.dec_callback = callback
-
-    # def def_chg_callback(self, callback):
-    #     self.chg_callback = callback
+        if 'sw_debounce_time' in params:
+            self.sw_debounce_time = params['sw_debounce_time']
 
     def watch(self):
 
@@ -76,14 +74,23 @@ class Encoder:
 
         while True:
             try:
+
                 # Switch part
+                latest_switch_call = None
                 if self.sw_callback:
                     if GPIO.input(self.sw) == GPIO.LOW:
                         if not swTriggered:
-                            self.sw_callback()
+                            now = time() * 1000
+                            logger.debug('latest_switch_call: {}'.format(latest_switch_call))
+                            logger.debug('self.sw_debounce_time: {}'.format(self.sw_debounce_time))
+                            logger.debug('now - latest_switch_call: {}'.format(now - latest_switch_call))
+                            if latest_switch_call and (now - latest_switch_call > self.sw_debounce_time):
+                                latest_switch_call = now
+                                self.sw_callback()
                         swTriggered = True
                     else:
                         swTriggered = False
+
                 # Encoder part
                 clkState = GPIO.input(self.clk)
                 dtState = GPIO.input(self.dt)

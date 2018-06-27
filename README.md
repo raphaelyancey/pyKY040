@@ -83,11 +83,12 @@ while True:
 # ... this is also where you can setup other encoders!
 
 # Mess with the encoder...
-# > Infinite loop...
+# > Other stuff...
+# > Looped stuff...
 # > Hello world! The scale position is 1
 # > Hello world! The scale position is 2
 # > Hello world! The scale position is 3
-# > Infinite loop...
+# > Looped stuff...
 # > Hello world! The scale position is 2
 
 ```
@@ -96,11 +97,14 @@ while True:
 
 ## Documentation
 
-#### `init(clkPin, dtPin, swPin)`
+#### `Encoder(CLK=x, DT=y, SW=z)`
 
-Initializes the module with the encoder pins.
+Initializes the module with the specified encoder pins.
 
-#### `setup()`
+- Options
+  - `polling_interval` Specify the pins polling interval in ms (default 1ms)
+
+#### `Encoder.setup()`
 
 Setup the behavior of the module. All of the following keyword arguments are optional.
 
@@ -116,14 +120,19 @@ Setup the behavior of the module. All of the following keyword arguments are opt
   - `loop (boolean)` Loop mode (defaults to `False`)
   - `step (int/float)` Scale step when incrementing or decrementing
 
+- Options
+  - `sw_debounce_time (int/float)` Switch debounce time in ms (allow only one interrupt per X ms, dismiss others)
+
 **Note:** better keep using ints and not floats for more precise results.
 
-#### `watch()`
+#### `Encoder.watch()`
 
-Starts the listener. The pins polling interval is `1ms`.
+Starts the listener. The pins polling interval is `1ms` by default and can be customized (see `Encoder()`).
 
-## TODO
+## CHANGELOG
 
-- Customizable polling interval
-- Optional switch pin
-- Bounce times
+**0.1.2**
+
+  - Changed `__init_` args to kwargs for better readability and ease of use `Encoder(CLK=x, DT=y, SW=z)`
+  - Added customizable debounce time (in ms) for the switch `setup(..., sw_debounce_time=300)`
+  - Added customizable polling interval (in ms) `Encoder(..., polling_interval=1)`
