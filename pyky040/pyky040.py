@@ -2,8 +2,11 @@ from RPi import GPIO
 from time import sleep, time
 import logging
 from threading import Timer
+from os import getenv
 
+logging.basicConfig()
 logger = logging.getLogger()
+logger.setLevel(getenv('DEBUG') or logging.INFO)
 
 
 class Encoder:
@@ -13,7 +16,7 @@ class Encoder:
     sw = None
 
     polling_interval = None  # Polling interval (in ms)
-    sw_debounce_time = None  # Debounce time (for switch only)
+    sw_debounce_time = 100  # Debounce time (for switch only)
 
     step = 1  # Scale step from min to max
     max_counter = 100  # Scale max
@@ -76,18 +79,17 @@ class Encoder:
             try:
 
                 # Switch part
-                latest_switch_call = None
                 if self.sw_callback:
                     if GPIO.input(self.sw) == GPIO.LOW:
                         if not swTriggered:
                             now = time() * 1000
-                            logger.debug('latest_switch_call: {}'.format(latest_switch_call))
-                            logger.debug('self.sw_debounce_time: {}'.format(self.sw_debounce_time))
-                            logger.debug('now - latest_switch_call: {}'.format(now - latest_switch_call))
-                            if latest_switch_call and (now - latest_switch_call > self.sw_debounce_time):
-                                latest_switch_call = now
+                            if latest_switch_call:
+                                if now - latest_switch_call > self.sw_debounce_time:
+                                    self.sw_callback()
+                            else:  # First call
                                 self.sw_callback()
                         swTriggered = True
+                        latest_switch_call = now
                     else:
                         swTriggered = False
 
