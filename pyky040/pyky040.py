@@ -6,7 +6,11 @@ from os import getenv
 
 logging.basicConfig()
 logger = logging.getLogger()
-logger.setLevel(getenv('DEBUG') or logging.INFO)
+
+if getenv('DEBUG') == '1':
+    logger.setLevel(logging.DEBUG)
+else:
+    logger.setLevel(logging.INFO)
 
 
 class Encoder:
@@ -15,7 +19,7 @@ class Encoder:
     dt = None
     sw = None
 
-    polling_interval = None  # Polling interval (in ms)
+    polling_interval = 1  # Polling interval (in ms)
     sw_debounce_time = 250  # Debounce time (for switch only)
 
     step = 1  # Scale step from min to max
@@ -31,7 +35,7 @@ class Encoder:
     chg_callback = None  # Rotation (either way)
     sw_callback  = None  # Switch pressed
 
-    def __init__(self, CLK=None, DT=None, SW=None, polling_interval=1):
+    def __init__(self, CLK=None, DT=None, SW=None, polling_interval=None):
         if not CLK or not DT:
             raise BaseException("You must specify at least the CLK & DT pins")
         self.clk = CLK
@@ -43,7 +47,8 @@ class Encoder:
             self.sw = SW
             GPIO.setup(self.sw, GPIO.IN, pull_up_down=GPIO.PUD_UP)  # Pulled-up because KY-040 switch is shorted to ground when pressed
         self.clkLastState = GPIO.input(self.clk)
-        self.polling_interval = polling_interval
+        if polling_interval is not None:
+            self.polling_interval = polling_interval
 
     def setup(self, **params):
 
@@ -55,21 +60,30 @@ class Encoder:
             self.counter_loop = False
 
         self.counter = self.min_counter + 0
+
         if 'scale_min' in params:
+            assert isinstance(params['scale_min'], int)
             self.min_counter = params['scale_min']
         if 'scale_max' in params:
+            assert isinstance(params['scale_max'], int)
             self.max_counter = params['scale_max']
         if 'step' in params:
+            assert isinstance(params['step'], int)
             self.step = params['step']
         if 'inc_callback' in params:
+            assert callable(params['inc_callback'])
             self.inc_callback = params['inc_callback']
         if 'dec_callback' in params:
+            assert callable(params['dec_callback'])
             self.dec_callback = params['dec_callback']
         if 'chg_callback' in params:
+            assert callable(params['chg_callback'])
             self.chg_callback = params['chg_callback']
         if 'sw_callback' in params:
+            assert callable(params['sw_callback'])
             self.sw_callback = params['sw_callback']
         if 'sw_debounce_time' in params:
+            assert isinstance(params['sw_debounce_time'], int)
             self.sw_debounce_time = params['sw_debounce_time']
 
     def watch(self):
