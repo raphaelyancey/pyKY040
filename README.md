@@ -146,6 +146,7 @@ Setup the behavior of the module. All of the following keyword arguments are opt
   - `sw_callback (function)` When the encoder switch is pressed
 
 - Scale mode
+  - `scale_start (int/float)`Starting position of Scale, Set it to 0 if you dont want to set a custom value
   - `scale_min (int/float)` Scale minimum
   - `scale_max (int/float)` Scale maximum
   - `loop (boolean)` Loop mode (defaults to `False`)
