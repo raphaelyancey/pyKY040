@@ -54,10 +54,11 @@ class Encoder:
         else:
             self.counter_loop = False
 
-        self.min_counter = params['scale_min']
         self.counter = self.min_counter + 0
-        self.max_counter = params['scale_max']
-
+        if 'scale_min' in params:
+            self.min_counter = params['scale_min']
+        if 'scale_max' in params:
+            self.max_counter = params['scale_max']
         if 'step' in params:
             self.step = params['step']
         if 'inc_callback' in params:
