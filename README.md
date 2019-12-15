@@ -95,6 +95,37 @@ while True:
 
 **Note:** The interruption of the module when running in threads is not yet handled, you might have to kill it by yourself 🔪
 
+### Controlling Volume level for souncard (needs python-alsaaudio 'sudo apt-get install python-alsaaudio')
+
+```python
+#!/usr/bin/python
+# import sys to set extra python path
+import sys
+
+sys.path.append("/home/pi/.local/lib/python2.7/site-packages")
+
+# Import required python modules, os is probably not required
+from pyky040 import pyky040
+import os
+import alsaaudio
+
+# Set M as variable for long command
+m = alsaaudio.Mixer('Speaker', cardindex=1)
+
+# Define your callback and use python alsaaudio to set volume (scale_position comes from pyky040)
+def my_callback(scale_position):
+    m.setvolume (scale_position)
+
+# Init the encoder pins (chane gpio numbers according to your setup)
+my_encoder = pyky040.Encoder(CLK=17, DT=18, SW=26)
+
+# Setup the options and callbacks (see documentation)
+my_encoder.setup(scale_min=0, scale_max=100, step=1, scale_start=m.getvolume()[0], chg_callback=my_callback)
+
+# Launch the listener
+my_encoder.watch()
+
+```
 ## Documentation
 
 #### `Encoder(CLK=x, DT=y, SW=z)`
