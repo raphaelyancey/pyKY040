@@ -46,6 +46,7 @@ class Encoder:
         if 'scale_min' in params:
             assert isinstance(params['scale_min'], int)
             self.min_counter = params['scale_min']
+            self.counter = self.min_counter
         if 'scale_max' in params:
             assert isinstance(params['scale_max'], int)
             self.max_counter = params['scale_max']
