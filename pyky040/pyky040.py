@@ -68,7 +68,7 @@ class Encoder:
             assert isinstance(params['sw_debounce_time'], int)
             self.sw_debounce_time = params['sw_debounce_time']
 
-        threading.Thread(target=self.loop)
+        threading.Thread(target=self.loop).start()
 
     def loop(self):
         for event in self.device.read_loop():
