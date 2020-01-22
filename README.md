@@ -23,6 +23,8 @@
 
 ## Usage
 
+[![asciicast](https://asciinema.org/a/GVUyrqUUnZP4Sne8eEmKTWHCt.svg)](https://asciinema.org/a/GVUyrqUUnZP4Sne8eEmKTWHCt)
+
 ### Basic
 
 ```python
@@ -130,6 +132,10 @@ Setup the behavior of the module. All of the following keyword arguments are opt
 Starts the listener. The pins polling interval is `1ms` by default and can be customized (see `Encoder()`).
 
 ## CHANGELOG
+
+**0.1.3**
+
+  - Fixed `latest_switch_call` not defined before the loop
 
 **0.1.2**
 
