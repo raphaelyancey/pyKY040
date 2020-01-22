@@ -171,7 +171,7 @@ It is known that some pins combinations introduce erratic behavior (interference
 
 Feel free to edit the README to provide your working combinations!
 
-If you are still experiencing issues, you might want to try to [set up the encoder as a device](device-or-gpio-polling) instead.
+If you are still experiencing issues, you might want to try to [set up the encoder as a device](#device-or-gpio-polling) instead.
 
 ## CHANGELOG
 
