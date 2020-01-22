@@ -7,38 +7,41 @@ import evdev
 
 logging.basicConfig()
 logger = logging.getLogger()
-logger.setLevel(getenv('DEBUG') or logging.INFO)
+logger.setLevel(logging.DEBUG if getenv('DEBUG') == '1' else logging.INFO)
 
 
 class Encoder:
 
-    clk = None
-    dt = None
-    sw = None
-
-    polling_interval = None  # Polling interval (in ms)
-    sw_debounce_time = 250  # Debounce time (for switch only)
-
-    step = 1  # Scale step from min to max
-    max_counter = 100  # Scale max
-    min_counter = 0  # Scale min
-    counter = 0  # Initial scale position
-    counter_loop = False  # If True, when at MAX, loop to MIN (-> 0, ..., MAX, MIN, ..., ->)
-
+    clk = None               # Board pin connected to the encoder CLK pin
+    dt = None                # Same for the DT pin
+    sw = None                # And for the switch pin
+    polling_interval = None  # GPIO polling interval (in ms)
+    sw_debounce_time = 250   # Debounce time (for switch only)
     clkLastState = None
 
-    inc_callback = None  # Clockwise rotation (increment)
-    dec_callback = None  # Anti-clockwise rotation (decrement)
-    chg_callback = None  # Rotation (either way)
-    sw_callback  = None  # Switch pressed
+    device = None            # Device path (when used instead of GPIO polling)
+
+    step = 1                 # Scale step from min to max
+    max_counter = 100        # Scale max
+    min_counter = 0          # Scale min
+    counter = 0              # Initial scale position
+    counter_loop = False     # If True, when at MAX, loop to MIN (-> 0, ..., MAX, MIN, ..., ->)
+
+    inc_callback = None      # Clockwise rotation callback (increment)
+    dec_callback = None      # Anti-clockwise rotation callback (decrement)
+    chg_callback = None      # Rotation callback (either way)
+    sw_callback = None       # Switch pressed callback
 
     def __init__(self, CLK=None, DT=None, SW=None, polling_interval=1, device=None):
 
         if device is not None:
+
             try:
                 self.device = evdev.InputDevice(device)
+                logger.info("Please note that the encoder switch functionnality isn't handled in `device` mode yet.")
             except OSError:
                 raise BaseException("The rotary encoder needs to be set up before use: please refer to the README or run `python -m pyky040 setup` for an interactive setup.")
+
         else:
 
             if not CLK or not DT:
