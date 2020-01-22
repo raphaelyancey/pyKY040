@@ -131,6 +131,18 @@ Setup the behavior of the module. All of the following keyword arguments are opt
 
 Starts the listener. The pins polling interval is `1ms` by default and can be customized (see `Encoder()`).
 
+## TROUBLESHOOTING
+
+### Erratic behavior
+
+It is known that some pins combinations introduce erratic behavior (interferences?). The library has been tested successfully using the following combinations (BCM numbering).
+
+|CLK| DT| SW|
+|---|---|---|
+| 26|  4| 21|
+
+Feel free to edit the README to provide your working combinations!
+
 ## CHANGELOG
 
 **0.1.3**
