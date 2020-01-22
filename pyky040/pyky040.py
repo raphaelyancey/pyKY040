@@ -40,7 +40,7 @@ class Encoder:
                 self.device = evdev.InputDevice(device)
                 logger.info("Please note that the encoder switch functionnality isn't handled in `device` mode yet.")
             except OSError:
-                raise BaseException("The rotary encoder needs to be set up before use: please refer to the README or run `python -m pyky040 setup` for an interactive setup.")
+                raise BaseException("The rotary encoder needs to be installed before use: https://github.com/raphaelyancey/pyky040#install-device")
 
         else:
 

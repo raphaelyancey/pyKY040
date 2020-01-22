@@ -151,16 +151,11 @@ The Raspberry Pi firmware allows the encoder to be set up as a device with the [
 |GPIO polling|**Yes**|No|No|
 |Device overlay|No|[Yes]()|**Yes**|
 
-#### How to install the encoder as a device?
+#### <a name="install-device"></a>How to install the encoder as a device?
 
-**INTERACTIVE**
-```bash
-python -m pyky040 setup
 ```
-
-**MANUAL**
-```
-# Copy this line (replacing {CLK_PIN} and {DT_PIN} by their real values) in /boot/config.txt
+# Copy this line in `/boot/config.txt` and reboot
+# (replacing {CLK_PIN} and {DT_PIN} by their real values)
 dtoverlay=rotary-encoder,pin_a={CLK_PIN},pin_b={DT_PIN},relative_axis=1,steps-per-period=2
 ```
 
@@ -180,6 +175,10 @@ If you are still experiencing issues, you might want to try to [set up the encod
 
 ## CHANGELOG
 
+**0.1.4**
+
+  - Added `device` mode
+ 
 **0.1.3**
 
   - Fixed `latest_switch_call` not defined before the loop
