@@ -137,9 +137,9 @@ Starts the listener. The pins polling interval is `1ms` by default and can be cu
 
 It is known that some pins combinations introduce erratic behavior (interferences?). The library has been tested successfully using the following combinations (BCM numbering).
 
-|CLK| DT| SW|
-|---|---|---|
-| 26|  4| 21|
+|CLK| DT| SW|       Pi|Raspbian|
+|---|---|---|---------|--------|
+| 26|  4| 21| 3B (1.2)|Buster  |
 
 Feel free to edit the README to provide your working combinations!
 
