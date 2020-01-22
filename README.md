@@ -142,16 +142,18 @@ Setup the behavior of the module. All of the following keyword arguments are opt
 
 Starts the listener. The pins polling interval is `1ms` by default and can be customized (see `Encoder()`).
 
-## <a name="device-or-gpio-polling"></a>GPIO polling or device overlay?
+## <a name="device-or-gpio-polling"></a>Should I use the GPIO polling or the device overlay?
 
-The Raspberry Pi firmware allows the encoder to be set up as a device with the [`rotary-encoder` overlay](https://github.com/raspberrypi/firmware/blob/master/boot/overlays/README#L1892-L1921). It trades the promise to catch every encoder tick, for the ease of use because it needs to be installed on the host beforeheand, with root privileges.
+The Raspberry Pi firmware allows the encoder to be set up as a device with the [`rotary-encoder` overlay](https://github.com/raspberrypi/firmware/blob/master/boot/overlays/README#L1892-L1921). It trades *the promise to catch every encoder tick* for *the ease of use* (because it needs to be installed on the host beforeheand, with root privileges).
 
 |Approach|Plug & Play|Needs prior installation|Catches every tick|
 |--------|-----------|------------------------|---------------------|
 |GPIO polling|**Yes**|No|No|
-|Device overlay|No|[Yes]()|**Yes**|
+|Device overlay|No|Yes|**Yes**|
 
-#### <a name="install-device"></a>How to install the encoder as a device?
+### <a name="install-device"></a>How to install the encoder as a device?
+
+Only tested on Raspbian Buster at this time.
 
 ```
 # Copy this line in `/boot/config.txt` and reboot
