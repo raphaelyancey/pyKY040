@@ -24,6 +24,8 @@
 
 ## Usage
 
+[![asciicast](https://asciinema.org/a/GVUyrqUUnZP4Sne8eEmKTWHCt.svg)](https://asciinema.org/a/GVUyrqUUnZP4Sne8eEmKTWHCt)
+
 ### Basic
 
 ```python
@@ -142,7 +144,7 @@ Starts the listener. The pins polling interval is `1ms` by default and can be cu
 
 ## <a name="device-or-gpio-polling"></a>GPIO polling or device overlay?
 
-The Raspberry Pi firmware allows the encoder to be set up as a device with the [`rotary-encoder` overlay](https://github.com/raspberrypi/firmware/blob/master/boot/overlays/README#L1892-L1921). It trades the promise to catch every tick for the ease of use (it needs to be installed on the host beforeheand).
+The Raspberry Pi firmware allows the encoder to be set up as a device with the [`rotary-encoder` overlay](https://github.com/raspberrypi/firmware/blob/master/boot/overlays/README#L1892-L1921). It trades the promise to catch every encoder tick, for the ease of use because it needs to be installed on the host beforeheand, with root privileges.
 
 |Approach|Plug & Play|Needs prior installation|Catches every tick|
 |--------|-----------|------------------------|---------------------|
@@ -162,7 +164,25 @@ python -m pyky040 setup
 dtoverlay=rotary-encoder,pin_a={CLK_PIN},pin_b={DT_PIN},relative_axis=1,steps-per-period=2
 ```
 
+## TROUBLESHOOTING
+
+### Erratic behavior
+
+It is known that some pins combinations introduce erratic behavior (interferences?). The library has been tested successfully using the following combinations (BCM numbering).
+
+|CLK| DT| SW|       Pi|Raspbian|
+|---|---|---|---------|--------|
+| 26|  4| 21| 3B (1.2)|Buster  |
+
+Feel free to edit the README to provide your working combinations!
+
+If you are still experiencing issues, you might want to try to [set up the encoder as a device](device-or-gpio-polling) instead.
+
 ## CHANGELOG
+
+**0.1.3**
+
+  - Fixed `latest_switch_call` not defined before the loop
 
 **0.1.2**
 
