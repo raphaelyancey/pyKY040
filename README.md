@@ -16,6 +16,7 @@
 - Scale mode (internal counter is bound between X and Y, and is given as argument in the callback functions)
 - Looped scale mode (from X to Y, then X again)
 - Custom scale step
+- GPIO polling (easier) or [as a device](#device-or-gpio-polling) (sturdier)
 
 ## Installation
 
@@ -35,6 +36,9 @@ def my_callback(scale_position):
 
 # Init the encoder pins
 my_encoder = pyky040.Encoder(CLK=17, DT=18, SW=26)
+
+# Or the encoder as a device (must be installed on the system beforehand!)
+# my_encoder = pyky040.Encoder(device='/dev/input/event0')
 
 # Setup the options and callbacks (see documentation)
 my_encoder.setup(scale_min=0, scale_max=100, step=1, chg_callback=my_callback)
@@ -65,6 +69,9 @@ def my_callback(scale_position):
 
 # Init the encoder pins
 my_encoder = pyky040.Encoder(CLK=17, DT=18, SW=26)
+
+# Or the encoder as a device (must be installed on the system beforehand!)
+# my_encoder = pyky040.Encoder(device='/dev/input/event0')
 
 # Setup the options and callbacks (see documentation)
 my_encoder.setup(scale_min=0, scale_max=100, step=1, chg_callback=my_callback)
@@ -104,6 +111,10 @@ Initializes the module with the specified encoder pins.
 - Options
   - `polling_interval` Specify the pins polling interval in ms (default 1ms)
 
+#### `Encoder(device='...')`
+
+Initializes the module with the specified encoder device. [Read more](#device-or-gpio-polling)
+
 #### `Encoder.setup()`
 
 Setup the behavior of the module. All of the following keyword arguments are optional.
@@ -128,6 +139,28 @@ Setup the behavior of the module. All of the following keyword arguments are opt
 #### `Encoder.watch()`
 
 Starts the listener. The pins polling interval is `1ms` by default and can be customized (see `Encoder()`).
+
+## <a name="device-or-gpio-polling"></a>GPIO polling or device overlay?
+
+The Raspberry Pi firmware allows the encoder to be set up as a device with the [`rotary-encoder` overlay](https://github.com/raspberrypi/firmware/blob/master/boot/overlays/README#L1892-L1921). It trades the promise to catch every tick for the ease of use (it needs to be installed on the host beforeheand).
+
+|Approach|Plug & Play|Needs prior installation|Catches every tick|
+|--------|-----------|------------------------|---------------------|
+|GPIO polling|**Yes**|No|No|
+|Device overlay|No|[Yes]()|**Yes**|
+
+#### How to install the encoder as a device?
+
+**INTERACTIVE**
+```bash
+python -m pyky040 setup
+```
+
+**MANUAL**
+```
+# Copy this line (replacing {CLK_PIN} and {DT_PIN} by their real values) in /boot/config.txt
+dtoverlay=rotary-encoder,pin_a={CLK_PIN},pin_b={DT_PIN},relative_axis=1,steps-per-period=2
+```
 
 ## CHANGELOG
 
