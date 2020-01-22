@@ -101,7 +101,7 @@ class Encoder:
         if self.chg_callback is not None:
             self.chg_callback(self.counter)
 
-    def _anticlockwise_tick(self):
+    def _counterclockwise_tick(self):
 
         if self.counter - self.step >= self.min_counter:
             # Same as for max ^
@@ -124,7 +124,7 @@ class Encoder:
                     if event.value == 1:
                         self._clockwise_tick()
                     elif event.value == -1:
-                        self._anticlockwise_tick()
+                        self._counterclockwise_tick()
 
         else:
 
@@ -156,7 +156,7 @@ class Encoder:
                         if dtState != clkState:
                             self._clockwise_tick()
                         else:
-                            self._anticlockwise_tick()
+                            self._counterclockwise_tick()
 
                     self.clkLastState = clkState
                     sleep(self.polling_interval / 1000)
