@@ -3,6 +3,7 @@ from time import sleep, time
 import logging
 from threading import Timer
 from os import getenv
+import warnings
 try:
     import evdev
 except Exception:
@@ -20,7 +21,11 @@ class Encoder:
     sw = None                # And for the switch pin
     polling_interval = None  # GPIO polling interval (in ms)
     sw_debounce_time = 250   # Debounce time (for switch only)
-    clkLastState = None
+
+    # State
+    clk_last_state = None
+    sw_triggered = False     # Used to debounce a long switch click (prevent multiple callback calls)
+    latest_switch_call = None
 
     device = None            # Device path (when used instead of GPIO polling)
 
@@ -63,7 +68,7 @@ class Encoder:
                 self.sw = SW
                 GPIO.setup(self.sw, GPIO.IN, pull_up_down=GPIO.PUD_UP)  # Pulled-up because KY-040 switch is shorted to ground when pressed
 
-            self.clkLastState = GPIO.input(self.clk)
+            self.clk_last_state = GPIO.input(self.clk)
             self.polling_interval = polling_interval
 
     def warnFloatDepreciation(self, i):
@@ -107,6 +112,22 @@ class Encoder:
         if 'sw_debounce_time' in params:
             assert isinstance(params['sw_debounce_time'], int) or isinstance(params['sw_debounce_time'], float)
             self.sw_debounce_time = params['sw_debounce_time']
+            self.warnFloatDepreciation(params['sw_debounce_time'])
+
+    def _switch_press(self):
+        now = time() * 1000
+        if not self.sw_triggered:
+            if self.latest_switch_call:
+                # Only callback if not in the debounce delta
+                if now - self.latest_switch_call > self.sw_debounce_time:
+                    self.sw_callback()
+            else:  # Or if first press since script started
+                self.sw_callback()
+        self.sw_triggered = True
+        self.latest_switch_call = now
+
+    def _switch_release(self):
+        self.sw_triggered = False
 
     def _clockwise_tick(self):
 
@@ -137,47 +158,34 @@ class Encoder:
     def watch(self):
 
         if self.device is not None:
-
             for event in self.device.read_loop():
                 if event.type == 2:
                     if event.value == 1:
                         self._clockwise_tick()
                     elif event.value == -1:
                         self._counterclockwise_tick()
-
         else:
-
-            swTriggered = False  # Used to debounce a long switch click (prevent multiple callback calls)
-            latest_switch_call = None
 
             while True:
                 try:
                     # Switch part
                     if self.sw_callback:
                         if GPIO.input(self.sw) == GPIO.LOW:
-                            if not swTriggered:
-                                now = time() * 1000
-                                if latest_switch_call:
-                                    if now - latest_switch_call > self.sw_debounce_time:
-                                        self.sw_callback()
-                                else:  # First call
-                                    self.sw_callback()
-                            swTriggered = True
-                            latest_switch_call = now
+                            self._switch_press()
                         else:
-                            swTriggered = False
+                            self._switch_release()
 
                     # Encoder part
                     clkState = GPIO.input(self.clk)
                     dtState = GPIO.input(self.dt)
 
-                    if clkState != self.clkLastState:
+                    if clkState != self.clk_last_state:
                         if dtState != clkState:
                             self._clockwise_tick()
                         else:
                             self._counterclockwise_tick()
 
-                    self.clkLastState = clkState
+                    self.clk_last_state = clkState
                     sleep(self.polling_interval / 1000)
 
                 except BaseException as e:
