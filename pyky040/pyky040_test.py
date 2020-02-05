@@ -1,5 +1,6 @@
 import unittest
 from unittest.mock import patch, Mock, MagicMock
+from time import sleep
 
 MockRPi = MagicMock()
 evdev = MagicMock()
@@ -36,9 +37,10 @@ class TestEncoder(unittest.TestCase):
         inc_mock = Mock()
         dec_mock = Mock()
         chg_mock = Mock()
+        sw_mock = Mock()
 
         encoder = pyky040.Encoder(DT=1, CLK=2)
-        encoder.setup(inc_callback=inc_mock, dec_callback=dec_mock, chg_callback=chg_mock)
+        encoder.setup(inc_callback=inc_mock, dec_callback=dec_mock, chg_callback=chg_mock, sw_callback=sw_mock, sw_debounce_time=1000)
 
         encoder._clockwise_tick()
         inc_mock.assert_called_once()
@@ -52,6 +54,33 @@ class TestEncoder(unittest.TestCase):
         dec_mock.assert_called_once()
         chg_mock.assert_called_once()
         inc_mock.assert_not_called()
+
+        encoder._switch_press()
+        encoder._switch_release()
+        sw_mock.assert_called_once()
+
+        sw_mock.reset_mock()
+        encoder.latest_switch_press = None
+
+        encoder._switch_press()
+        encoder._switch_release()
+        encoder._switch_press()
+        encoder._switch_release()
+        encoder._switch_press()
+        encoder._switch_release()
+        # ^ these 3 presses would be executed in less than 1000ms
+        sw_mock.assert_called_once()
+
+        sw_mock.reset_mock()
+        encoder.latest_switch_press = None
+
+        encoder._switch_press()
+        encoder._switch_release()
+        sleep(2)
+        encoder._switch_press()
+        encoder._switch_release()
+        sw_mock.assert_called()
+        assert sw_mock.call_count == 2
 
     def test_scale_mode(self):
         """

@@ -25,7 +25,7 @@ class Encoder:
     # State
     clk_last_state = None
     sw_triggered = False     # Used to debounce a long switch click (prevent multiple callback calls)
-    latest_switch_call = None
+    latest_switch_press = None
 
     device = None            # Device path (when used instead of GPIO polling)
 
@@ -117,14 +117,14 @@ class Encoder:
     def _switch_press(self):
         now = time() * 1000
         if not self.sw_triggered:
-            if self.latest_switch_call:
+            if self.latest_switch_press is not None:
                 # Only callback if not in the debounce delta
-                if now - self.latest_switch_call > self.sw_debounce_time:
+                if now - self.latest_switch_press > self.sw_debounce_time:
                     self.sw_callback()
             else:  # Or if first press since script started
                 self.sw_callback()
         self.sw_triggered = True
-        self.latest_switch_call = now
+        self.latest_switch_press = now
 
     def _switch_release(self):
         self.sw_triggered = False
