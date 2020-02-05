@@ -66,6 +66,10 @@ class Encoder:
             self.clkLastState = GPIO.input(self.clk)
             self.polling_interval = polling_interval
 
+    def warnFloatDepreciation(self, i):
+        if isinstance(i, float):
+            warnings.warn('Float numbers as `scale_min`, `scale_max`, `sw_debounce_time` or `step` will be deprecated in the next major release. Use integers instead.', DeprecationWarning)
+
     def setup(self, **params):
 
         # Note: boundaries are inclusive : [min_c, max_c]
@@ -79,12 +83,15 @@ class Encoder:
             assert isinstance(params['scale_min'], int) or isinstance(params['scale_min'], float)
             self.min_counter = params['scale_min']
             self.counter = self.min_counter
+            self.warnFloatDepreciation(params['scale_min'])
         if 'scale_max' in params:
             assert isinstance(params['scale_max'], int) or isinstance(params['scale_max'], float)
             self.max_counter = params['scale_max']
+            self.warnFloatDepreciation(params['scale_max'])
         if 'step' in params:
-            assert isinstance(params['step'], int) or isinstance(params['scale_min'], float)
+            assert isinstance(params['step'], int) or isinstance(params['step'], float)
             self.step = params['step']
+            self.warnFloatDepreciation(params['step'])
         if 'inc_callback' in params:
             assert callable(params['inc_callback'])
             self.inc_callback = params['inc_callback']
