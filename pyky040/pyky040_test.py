@@ -2,9 +2,11 @@ import unittest
 from unittest.mock import patch, Mock, MagicMock
 
 MockRPi = MagicMock()
+evdev = MagicMock()
 modules = {
     "RPi": MockRPi,
     "RPi.GPIO": MockRPi.GPIO,
+    "evdev": evdev
 }
 patcher = patch.dict("sys.modules", modules)
 patcher.start()
@@ -106,6 +108,33 @@ class TestEncoder(unittest.TestCase):
 
         encoder._counterclockwise_tick()
         self.assertEqual(encoder.counter, 40)
+
+        encoder = pyky040.Encoder(DT=1, CLK=2)
+        encoder.setup(chg_callback=lambda count: None, scale_min=33, scale_max=40, step=0.1)
+
+        # Gotta round the float numbers to compare because 34.100000000000016 != 34.1, for example
+
+        for _ in range(0, 10):
+            encoder._clockwise_tick()
+        self.assertEqual(round(encoder.counter, 1), 34.0)
+
+        encoder._clockwise_tick()
+        self.assertEqual(round(encoder.counter, 1), 34.1)
+
+        encoder._counterclockwise_tick()
+        encoder._counterclockwise_tick()
+        self.assertEqual(round(encoder.counter, 1), 33.9)
+
+        encoder = pyky040.Encoder(DT=1, CLK=2)
+        encoder.setup(chg_callback=lambda count: None, scale_min=2, scale_max=8, step=2, loop=True)
+
+        for _ in range(0, 2):
+            encoder._clockwise_tick()
+        self.assertEqual(encoder.counter, 6)
+
+        encoder._clockwise_tick()
+        encoder._clockwise_tick()
+        self.assertEqual(encoder.counter, 2)
 
 
 if __name__ == '__main__':
