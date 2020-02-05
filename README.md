@@ -20,7 +20,9 @@
 
 ## Installation
 
-`pip install pyky040`
+```bash
+pip install pyky040
+```
 
 ## Usage
 
@@ -115,7 +117,11 @@ Initializes the module with the specified encoder pins.
 
 #### `Encoder(device='...')`
 
+⚠️ Linux only
+
 Initializes the module with the specified encoder device. [Read more](#device-or-gpio-polling)
+
+Requirement: `pip install pyky040[device]`
 
 #### `Encoder.setup()`
 
