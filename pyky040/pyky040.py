@@ -16,7 +16,7 @@ class Encoder:
     sw = None
 
     polling_interval = None  # Polling interval (in ms)
-    sw_debounce_time = 250  # Debounce time (for switch only)
+    sw_debounce_time = 100  # Debounce time (for switch only)
 
     step = 1  # Scale step from min to max
     max_counter = 100  # Scale max
@@ -54,11 +54,10 @@ class Encoder:
         else:
             self.counter_loop = False
 
-        self.counter = self.min_counter + 0
-        if 'scale_min' in params:
-            self.min_counter = params['scale_min']
-        if 'scale_max' in params:
-            self.max_counter = params['scale_max']
+        self.min_counter = params['scale_min']
+        self.counter = params['scale_start']
+        self.max_counter = params['scale_max']
+
         if 'step' in params:
             self.step = params['step']
         if 'inc_callback' in params:
