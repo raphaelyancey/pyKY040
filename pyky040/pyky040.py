@@ -54,7 +54,8 @@ class Encoder:
         else:
             self.counter_loop = False
 
-        self.counter = self.min_counter + 0
+        if 'initial_pos' in params:
+            self.counter = params['initial_pos']
         if 'scale_min' in params:
             self.min_counter = params['scale_min']
         if 'scale_max' in params:
