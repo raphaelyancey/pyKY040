@@ -39,7 +39,7 @@ class TestEncoder(unittest.TestCase):
         chg_mock = Mock()
         sw_mock = Mock()
 
-        encoder = pyky040.Encoder(DT=1, CLK=2)
+        encoder = pyky040.Encoder(DT=1, CLK=2, SW=3)
         encoder.setup(inc_callback=inc_mock, dec_callback=dec_mock, chg_callback=chg_mock, sw_callback=sw_mock, sw_debounce_time=1000)
 
         encoder._clockwise_tick()
