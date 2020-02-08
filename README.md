@@ -16,10 +16,13 @@
 - Scale mode (internal counter is bound between X and Y, and is given as argument in the callback functions)
 - Looped scale mode (from X to Y, then X again)
 - Custom scale step
+- GPIO polling (easier) or [as a device](#device-or-gpio-polling) (sturdier)
 
 ## Installation
 
-`pip install pyky040`
+```bash
+pip install pyky040
+```
 
 ## Usage
 
@@ -37,6 +40,9 @@ def my_callback(scale_position):
 
 # Init the encoder pins
 my_encoder = pyky040.Encoder(CLK=17, DT=18, SW=26)
+
+# Or the encoder as a device (must be installed on the system beforehand!)
+# my_encoder = pyky040.Encoder(device='/dev/input/event0')
 
 # Setup the options and callbacks (see documentation)
 my_encoder.setup(scale_min=0, scale_max=100, step=1, chg_callback=my_callback)
@@ -67,6 +73,9 @@ def my_callback(scale_position):
 
 # Init the encoder pins
 my_encoder = pyky040.Encoder(CLK=17, DT=18, SW=26)
+
+# Or the encoder as a device (must be installed on the system beforehand!)
+# my_encoder = pyky040.Encoder(device='/dev/input/event0')
 
 # Setup the options and callbacks (see documentation)
 my_encoder.setup(scale_min=0, scale_max=100, step=1, chg_callback=my_callback)
@@ -106,6 +115,14 @@ Initializes the module with the specified encoder pins.
 - Options
   - `polling_interval` Specify the pins polling interval in ms (default 1ms)
 
+#### `Encoder(device='...')`
+
+⚠️ Linux only
+
+Initializes the module with the specified encoder device. [Read more](#device-or-gpio-polling)
+
+Requirement: `pip install pyky040[device]`
+
 #### `Encoder.setup()`
 
 Setup the behavior of the module. All of the following keyword arguments are optional.
@@ -131,6 +148,25 @@ Setup the behavior of the module. All of the following keyword arguments are opt
 
 Starts the listener. The pins polling interval is `1ms` by default and can be customized (see `Encoder()`).
 
+## <a name="device-or-gpio-polling"></a>Should I use the GPIO polling or the device overlay?
+
+The Raspberry Pi firmware allows the encoder to be set up as a device with the [`rotary-encoder` overlay](https://github.com/raspberrypi/firmware/blob/master/boot/overlays/README#L1892-L1921). It trades *the promise to catch every encoder tick* for *the ease of use* (because it needs to be installed on the host beforeheand, with root privileges).
+
+|Approach|Plug & Play|Needs prior installation|Catches every tick|
+|--------|-----------|------------------------|---------------------|
+|GPIO polling|**Yes**|No|No|
+|Device overlay|No|Yes|**Yes**|
+
+### <a name="install-device"></a>How to install the encoder as a device?
+
+Only tested on Raspbian Buster at this time.
+
+```
+# Copy this line in `/boot/config.txt` and reboot
+# (replacing {CLK_PIN} and {DT_PIN} by their real values)
+dtoverlay=rotary-encoder,pin_a={CLK_PIN},pin_b={DT_PIN},relative_axis=1,steps-per-period=2
+```
+
 ## TROUBLESHOOTING
 
 ### Erratic behavior
@@ -143,8 +179,14 @@ It is known that some pins combinations introduce erratic behavior (interference
 
 Feel free to edit the README to provide your working combinations!
 
+If you are still experiencing issues, you might want to try to [set up the encoder as a device](#device-or-gpio-polling) instead.
+
 ## CHANGELOG
 
+**0.1.4**
+
+  - Added `device` mode
+ 
 **0.1.3**
 
   - Fixed `latest_switch_call` not defined before the loop
