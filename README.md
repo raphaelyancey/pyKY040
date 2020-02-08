@@ -190,6 +190,7 @@ If you are still experiencing issues, you might want to try to [set up the encod
 **0.1.4**
 
   - Added `device` mode
+  - Added tests
  
 **0.1.3**
 
