@@ -1,3 +1,5 @@
+![tests](https://github.com/raphaelyancey/pyKY040/workflows/tests/badge.svg)
+
 # pyKY040
 
 **High-level Python module for the KY040 rotary encoder and switch** on Raspberry Pi and similar boards that use `RPi.GPIO`
