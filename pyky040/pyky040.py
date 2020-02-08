@@ -4,14 +4,15 @@ import logging
 from threading import Timer
 from os import getenv
 import warnings
-try:
-    import evdev
-except Exception:
-    pass
 
 logging.basicConfig()
 logger = logging.getLogger()
 logger.setLevel(logging.DEBUG if getenv('DEBUG') == '1' else logging.INFO)
+
+try:
+    import evdev
+except Exception:
+    logging.info("The `evdev` package wasn't found, install it if you need to use the `device` mode.")
 
 
 class Encoder:
