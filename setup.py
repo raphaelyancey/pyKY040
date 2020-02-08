@@ -20,6 +20,9 @@ setup(
     #py_modules=["pyky040"],
     packages=find_packages(),
     install_requires=['RPi.GPIO'],
+    extras_require={
+        "device": ["evdev"]
+    }
     project_urls={
         'Bug Reports': 'https://github.com/raphaelyancey/pyKY040/issues',
         'Source': 'https://github.com/raphaelyancey/pyKY040',
