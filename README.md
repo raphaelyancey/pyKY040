@@ -26,9 +26,11 @@
 pip install pyky040
 ```
 
+<!--
 ## Usage
 
 [![asciicast](https://asciinema.org/a/GVUyrqUUnZP4Sne8eEmKTWHCt.svg)](https://asciinema.org/a/GVUyrqUUnZP4Sne8eEmKTWHCt)
+-->
 
 ### Basic
 
