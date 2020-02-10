@@ -9,7 +9,7 @@ with open(path.join(here, 'README.md'), encoding='utf-8') as f:
 
 setup(
     name='pyky040',
-    version='0.1.3',
+    version='0.1.4',
     description='High-level interface for the KY040 rotary encoder and switch.',
     long_description=long_description,
     long_description_content_type='text/markdown',
@@ -20,6 +20,9 @@ setup(
     #py_modules=["pyky040"],
     packages=find_packages(),
     install_requires=['RPi.GPIO'],
+    extras_require={
+        "device": ["evdev"]
+    },
     project_urls={
         'Bug Reports': 'https://github.com/raphaelyancey/pyKY040/issues',
         'Source': 'https://github.com/raphaelyancey/pyKY040',
