@@ -94,6 +94,11 @@ class Encoder:
             assert isinstance(params['scale_max'], int) or isinstance(params['scale_max'], float)
             self.max_counter = params['scale_max']
             self.warnFloatDepreciation(params['scale_max'])
+            
+        self.counter = self.min_counter
+        if 'initial_pos' in params:
+            self.counter = params['initial_pos']
+
         if 'step' in params:
             assert isinstance(params['step'], int) or isinstance(params['step'], float)
             self.step = params['step']
