@@ -12,10 +12,13 @@ modules = {
 patcher = patch.dict("sys.modules", modules)
 patcher.start()
 
-import pyky040
+from pyky040 import pyky040, __version__
 
 
 class TestEncoder(unittest.TestCase):
+
+    def test_version(self):
+        assert __version__ == '0.1.4'
 
     def test_types(self):
         """
